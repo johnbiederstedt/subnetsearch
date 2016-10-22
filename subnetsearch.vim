@@ -5,7 +5,19 @@ python << PYEND
     regeular expression to match all the ip addresses in that subnet, and runs
     a search using that regular expression
     Requires: python 2.7 or higher and the backported ipaddress module:
-    pip install backport_ipaddress
+    $ pip install backport_ipaddress
+
+    Copyright 2016 John Biederstedt
+
+    This program is free software: you can redistribute it and/or modify it
+    under the terms of the GNU General Public License (GPL2) as published by
+    the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
 """
 import sys, re, ipaddress
 import vim

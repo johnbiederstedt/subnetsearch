@@ -4,7 +4,8 @@ python << PYEND
     Takes a string from what is currently highlighted in vim, generates a
     regeular expression to match all the ip addresses in that subnet, and runs
     a search using that regular expression
-    Requires: python 2.7 or higher and the backported ipaddress module
+    Requires: python 2.7 or higher and the backported ipaddress module:
+    pip install backport_ipaddress
 """
 import sys, re, ipaddress
 import vim

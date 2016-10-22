@@ -7,7 +7,7 @@ python << PYEND
     Requires: python 2.7 or higher and the backported ipaddress module:
     $ pip install backport_ipaddress
 
-    Copyright 2016 John Biederstedt
+    Copyright 2016 John Biederstedt. All rights reserved.
 
     This program is free software: you can redistribute it and/or modify it
     under the terms of the GNU General Public License (GPL2) as published by

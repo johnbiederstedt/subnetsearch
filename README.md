@@ -8,8 +8,5 @@ address are left highlighted.
 
 ![demo](https://cloud.githubusercontent.com/assets/940589/19622892/dd0ab1fc-987a-11e6-8436-c0af02d94fcc.gif)
 
-It uses python 2, and as such needs the backported ipaddress module.  On any
-system that supports pip:
-
-$ pip install backport_ipaddress
+Has been updated to compensate for arbitrary unicode errors in the mainline ipaddress module
 

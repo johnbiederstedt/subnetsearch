@@ -7,6 +7,7 @@ python << PYEND
     Requires: python 2.7
     Updated: Various uses of str and unicode functions to compensate for unicode
              issues in mainline ipaddress module
+
 """
 import sys, re
 import ipaddress

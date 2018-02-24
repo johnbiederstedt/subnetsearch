@@ -4,19 +4,8 @@ python << PYEND
     Takes a string from what is currently highlighted in vim, generates a
     regeular expression to match all the ip addresses in that subnet, and runs
     a search using that regular expression
-    Requires: python 2.7 or higher and the backported ipaddress module:
-    $ pip install backport_ipaddress
 
-    Copyright 2016 John Biederstedt. All rights reserved.
-
-    This program is free software: you can redistribute it and/or modify it
-    under the terms of the GNU General Public License (GPL2) as published by
-    the Free Software Foundation.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    Requires: python 2.7
 
 """
 import sys, re, ipaddress
@@ -27,9 +16,15 @@ from collections import defaultdict
 @property
 def _octets(self):
     """
-        returns a list the octets in an ip address
+        returns a list the octets in an ip address 
+        
+        NOTE: 
+              fixed to compensate for 'exploded' returning a unicode object.
+              These values are used later to build a regex string passed to
+              vim.
+
     """
-    octets = list(self.exploded.replace('/', '.').split('.'))
+    octets = list(str(self.exploded).replace('/', '.').split('.'))
     if len(octets) > 4:
         return octets[:-1]
     else:
@@ -38,6 +33,27 @@ def _octets(self):
 # makes going through the octets in an ip
 # address easier
 ipaddress._IPAddressBase.octets = _octets
+
+def ip_address(ip):
+    """
+        Compensates for 'Did you pass in a bytes (str in Python 2) instead of a unicode object?'
+
+    """
+    return ipaddress.ip_address(unicode(ip))
+
+def ip_network(ip):
+    """
+        Compensates for 'Did you pass in a bytes (str in Python 2) instead of a unicode object?'
+
+    """
+    return ipaddress.ip_network(unicode(ip))
+
+def ip_interface(ip):
+    """
+        Compensates for 'Did you pass in a bytes (str in Python 2) instead of a unicode object?'
+
+    """
+    return ipaddress.ip_interface(unicode(ip))
 
 def bracket_expr(_list):
     """
@@ -104,7 +120,7 @@ def group_octets(network):
                 
     """
     if type(network) is not ipaddress.IPv4Network:
-        network = ipaddress.ip_network(network)
+        network = ip_network(network)
     _octets = []
     for a in range(4):
         _octets.append([])
@@ -175,7 +191,7 @@ def Network_Regex(network):
         Returns: a regex matching the addresses falling withing that network
     """
     if type(network) is not ipaddress.IPv4Network:
-        network = ipaddress.ip_network(network)
+        network = ip_network(network)
     regex = '\\'
     regex += 'v'
     for row_num, octet in enumerate(group_octets(network)):
@@ -200,18 +216,18 @@ if __name__ == "__main__":
     if len(i.split()) == 2 or len(i.split("/")) == 2:
         if "/" not in i:
             try:
-                p = ipaddress.ip_address(i.split()[0])
+                p = ip_address(i.split()[0])
             except ValueError:
                 print i, "doesn't seem like an IP address"
                 exit()
             try:
-                subnet = ipaddress.ip_interface(str(p) + '/' + str(p._make_netmask(i.split()[1])[1])).network
+                subnet = ip_interface(str(p) + '/' + str(p._make_netmask(i.split()[1])[1])).network
             except IndexError:
                 print i, "doesn't look like a good subnet address"
                 exit()
         elif "/" in i:
             try:
-                subnet = ipaddress.ip_interface(i).network
+                subnet = ip_interface(i).network
             except IndexError:
                 print i, "Doesn't look like a good subnet address"
                 exit()

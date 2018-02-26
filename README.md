@@ -6,7 +6,7 @@ addresses in that CIDR specified subnet including the network number and the
 broadcast address.  It then executes that search such that all the matching IP
 address are left highlighted.
 
-![demo](https://github.com/johnbiederstedt/subnetsearch/search.gif)
+![demo](https://raw.githubusercontent.com/johnbiederstedt/subnetsearch/search.gif)
 
 Has been updated to compensate for arbitrary unicode errors in the mainline ipaddress module
 

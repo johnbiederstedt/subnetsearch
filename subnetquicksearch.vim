@@ -33,6 +33,28 @@ def _octets(self):
 # address easier
 ipaddress._IPAddressBase.octets = _octets
 
+def ip_address(ip):
+    """
+        Compensates for 'Did you pass in a bytes (str in Python 2) instead of a unicode object?'
+
+    """
+    return ipaddress.ip_address(unicode(ip))
+
+def ip_network(ip):
+    """
+        Compensates for 'Did you pass in a bytes (str in Python 2) instead of a unicode object?'
+
+    """
+    return ipaddress.ip_network(unicode(ip))
+
+def ip_interface(ip):
+    """
+        Compensates for 'Did you pass in a bytes (str in Python 2) instead of a unicode object?'
+
+    """
+    return ipaddress.ip_interface(unicode(ip))
+
+
 def bracket_expr(_list):
     """
         takes:
@@ -192,16 +214,14 @@ if __name__ == "__main__":
     vim.command("let Subnet = @*")
     i = vim.eval('Subnet')
     if len(i.split()) == 2 or len(i.split("/")) == 2:
-        # compensate for arbitrary unicode error in mainline ipaddress module
-        i = unicode(i) 
         if "/" not in i:
             try:
-                p = ipaddress.ip_address(i.split()[0])
+                p = ip_address(i.split()[0])
             except ValueError:
                 print i, "doesn't seem like an IP address"
                 exit()
             try:
-                subnet = ipaddress.ip_interface(unicode(p) + '/' + unicode(p._make_netmask(i.split()[1])[1])).network
+                subnet = ip_interface(unicode(p) + '/' + unicode(p._make_netmask(i.split()[1])[1])).network
             except IndexError:
                 print i, "doesn't look like a good subnet address"
                 exit()
@@ -210,10 +230,12 @@ if __name__ == "__main__":
                 exit()
         elif "/" in i:
             try:
-                subnet = ipaddress.ip_interface(i).network
+                subnet = p_interface(i).network
             except IndexError:
-                print i, "Doesn't look like a good subnet address"
+                print "%s Doesn't look like a good subnet address" % i
                 exit()
+    else:
+        print "got %s for input, couldn't parse it as expected" % i
     subnet_match = Network_Regex(subnet)
     # set the register for the last search to this search
     vim.command('let @/ = ' + "'" + subnet_match + "'")

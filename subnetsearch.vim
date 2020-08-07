@@ -1,28 +1,21 @@
 function! SubnetSearch()
-python << PYEND
+python3 << PYEND
 """
     Takes a string from what is currently highlighted in vim, generates a
     regeular expression to match all the ip addresses in that subnet, and runs
     a search using that regular expression
 
-    Requires: python 2.7
+    Requires: python 3.7 or higher
 
 """
 import sys, re, ipaddress
 import vim
-from pprint import pprint
 from collections import defaultdict
 
 @property
 def _octets(self):
     """
-        returns a list the octets in an ip address 
-        
-        NOTE: 
-              fixed to compensate for 'exploded' returning a unicode object.
-              These values are used later to build a regex string passed to
-              vim.
-
+        returns a list the octets in an ip address
     """
     octets = list(str(self.exploded).replace('/', '.').split('.'))
     if len(octets) > 4:
@@ -35,25 +28,13 @@ def _octets(self):
 ipaddress._IPAddressBase.octets = _octets
 
 def ip_address(ip):
-    """
-        Compensates for 'Did you pass in a bytes (str in Python 2) instead of a unicode object?'
-
-    """
-    return ipaddress.ip_address(unicode(ip))
+    return ipaddress.ip_address(str(ip))
 
 def ip_network(ip):
-    """
-        Compensates for 'Did you pass in a bytes (str in Python 2) instead of a unicode object?'
-
-    """
-    return ipaddress.ip_network(unicode(ip))
+    return ipaddress.ip_network(str(ip))
 
 def ip_interface(ip):
-    """
-        Compensates for 'Did you pass in a bytes (str in Python 2) instead of a unicode object?'
-
-    """
-    return ipaddress.ip_interface(unicode(ip))
+    return ipaddress.ip_interface(str(ip))
 
 def bracket_expr(_list):
     """
@@ -95,7 +76,7 @@ def groupbyvalue(_key, _dict):
                  (['9', '8', '7', '6', '5', '4', '3', '2', '1', '0'], ['1', '2'])]
     """
     v = defaultdict(list)
-    for key,value in sorted(_dict.iteritems()):
+    for key,value in sorted(_dict.items()):
         if _key != '0':
             v[str(value)].append(key)
         else:
@@ -117,7 +98,7 @@ def group_octets(network):
         take: an ip network address: '10.9.8.0/24'
         returns: a list of 4 lists, each sublist containing a list of strings representing
                  the sequence of numbers of an octet in a network range
-                
+
     """
     if type(network) is not ipaddress.IPv4Network:
         network = ip_network(network)
@@ -163,7 +144,7 @@ def dd2Regex(dd, anchor1='\.', anchor2='( |$|[^0-9])'):
         returns: a regular expression match only the contents of the list
         NOTE: vim is limited to 10 groups total
     """
-    regex = '' 
+    regex = ''
     for key in sorted(dd.keys()):
         if key == '0':
             l = len(groupbyvalue(key, dd['0']))
@@ -218,18 +199,18 @@ if __name__ == "__main__":
             try:
                 p = ip_address(i.split()[0])
             except ValueError:
-                print i, "doesn't seem like an IP address"
+                print(i, "doesn't seem like an IP address")
                 exit()
             try:
                 subnet = ip_interface(str(p) + '/' + str(p._make_netmask(i.split()[1])[1])).network
             except IndexError:
-                print i, "doesn't look like a good subnet address"
+                print(i, "doesn't look like a good subnet address")
                 exit()
         elif "/" in i:
             try:
                 subnet = ip_interface(i).network
             except IndexError:
-                print i, "Doesn't look like a good subnet address"
+                print(i, "Doesn't look like a good subnet address")
                 exit()
     subnet_match = Network_Regex(subnet)
     # set the register for the last search to this search
